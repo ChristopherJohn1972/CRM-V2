@@ -183,7 +183,7 @@ class OrderAdjustment(Base):
     description = sa.Column(sa.String(255), nullable=False)
     rate = sa.Column(sa.Numeric(5, 2))
     amount = sa.Column(sa.Numeric(18, 2), nullable=False, server_default=sa.text("0.00"))
-    is_taxable = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_taxable = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     sort_order = sa.Column(sa.Integer, nullable=False, server_default=sa.text("0"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -368,7 +368,7 @@ class ReceiptTemplate(Base):
         server_default=ReceiptTemplateStatus.ACTIVE.value,
     )
     current_version = sa.Column(sa.Integer, nullable=False, server_default=sa.text("1"))
-    is_default = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_default = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     content_config = sa.Column(JSON)
     created_by = sa.Column(sa.BigInteger, sa.ForeignKey("users.user_id", ondelete="SET NULL"))
     updated_by = sa.Column(sa.BigInteger, sa.ForeignKey("users.user_id", ondelete="SET NULL"))

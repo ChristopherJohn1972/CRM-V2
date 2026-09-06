@@ -17,7 +17,7 @@ class Branch(Base):
     name = sa.Column(sa.String(100), nullable=False)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     department_id = sa.Column(sa.BigInteger, sa.ForeignKey("departments.department_id", ondelete="SET NULL"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -93,7 +93,7 @@ class CustomerAddress(Base, TimestampMixin):
     state_province = sa.Column(sa.String(100))
     postal_code = sa.Column(sa.String(30))
     country = sa.Column(sa.String(100))
-    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
 
 
 class ContactRole(Base):
@@ -102,7 +102,7 @@ class ContactRole(Base):
     contact_role_id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     name = sa.Column(sa.String(100), nullable=False)
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 
@@ -120,8 +120,8 @@ class CustomerContact(Base, TimestampMixin):
     phone = sa.Column(sa.String(50))
     mobile = sa.Column(sa.String(50))
     role_id = sa.Column(sa.BigInteger, sa.ForeignKey("contact_roles.contact_role_id", ondelete="SET NULL"))
-    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
 
 
 class RelationshipType(Base):
@@ -130,8 +130,8 @@ class RelationshipType(Base):
     relationship_type_id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     name = sa.Column(sa.String(100), nullable=False)
-    bidirectional = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    bidirectional = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 

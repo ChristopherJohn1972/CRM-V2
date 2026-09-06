@@ -10,7 +10,7 @@ class ActivityType(Base):
     activity_type_id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     name = sa.Column(sa.String(100), nullable=False)
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 

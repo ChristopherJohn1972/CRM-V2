@@ -45,7 +45,7 @@ class UssdShortCode(Base):
     id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True)
     short_code = sa.Column(sa.String(20), nullable=False, unique=True)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     gateway_provider = sa.Column(sa.String(100))
     gateway_config = sa.Column(JSON)
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())

@@ -13,7 +13,7 @@ class MomentumRule(Base):
     code = sa.Column(sa.String(100), nullable=False, unique=True)
     trigger_type = sa.Column(sa.Enum(MomentumTriggerType), nullable=False)
     config = sa.Column(JSON, nullable=False)
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     valid_from = sa.Column(sa.DateTime, nullable=False)
     valid_until = sa.Column(sa.DateTime)
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())

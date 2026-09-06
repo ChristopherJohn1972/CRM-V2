@@ -13,8 +13,8 @@ class AttributionModel(Base):
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     description = sa.Column(sa.Text)
     config = sa.Column(JSON)
-    is_default = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_default = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 

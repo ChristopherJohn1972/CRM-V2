@@ -89,4 +89,4 @@ class CommunicationProviderEvent(Base):
     status = sa.Column(sa.String(20))
     raw_event = sa.Column(sa.JSON)
     received_at = sa.Column(sa.DateTime, nullable=False)
-    processed = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    processed = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))

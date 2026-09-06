@@ -81,7 +81,7 @@ class PortalPermission(Base):
     resource = sa.Column(sa.String(100), nullable=False)
     action = sa.Column(sa.String(100), nullable=False)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 
@@ -123,8 +123,8 @@ class PortalUserCustomer(Base):
     role = sa.Column(
         sa.Enum(PortalRelationshipType), nullable=False, server_default=PortalRelationshipType.CONTACT.value
     )
-    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_primary = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
     __table_args__ = (
@@ -302,7 +302,7 @@ class Notification(Base):
     body = sa.Column(sa.Text)
     reference_type = sa.Column(sa.String(50))
     reference_id = sa.Column(sa.BigInteger)
-    is_read = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_read = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 

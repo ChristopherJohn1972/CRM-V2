@@ -40,7 +40,7 @@ class Department(Base):
     name = sa.Column(sa.String(100), nullable=False, unique=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -53,7 +53,7 @@ class Team(Base):
     name = sa.Column(sa.String(100), nullable=False, unique=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -66,7 +66,7 @@ class TeamMember(Base):
     user_id = sa.Column(sa.BigInteger, sa.ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     joined_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     left_at = sa.Column(sa.DateTime)
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
 
     __table_args__ = (sa.UniqueConstraint("team_id", "user_id", name="uq_team_members"),)
 
@@ -125,8 +125,8 @@ class Role(Base):
     name = sa.Column(sa.String(100), nullable=False, unique=True)
     code = sa.Column(sa.String(100), nullable=False, unique=True)
     description = sa.Column(sa.String(255))
-    is_system_role = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_system_role = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -140,7 +140,7 @@ class Permission(Base):
     resource = sa.Column(sa.String(100), nullable=False)
     action = sa.Column(sa.String(100), nullable=False)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
@@ -194,7 +194,7 @@ class AccessPolicy(Base):
     code = sa.Column(sa.String(100), nullable=False, unique=True)
     scope = sa.Column(sa.Enum(AccessScope), nullable=False)
     description = sa.Column(sa.String(255))
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 

@@ -188,7 +188,7 @@ class CreativeConcept(Base):
     strategy = sa.Column(sa.Enum(ConceptStrategy), nullable=False)
     description = sa.Column(sa.Text)
     recommendation_reason = sa.Column(sa.Text)
-    is_selected = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_selected = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 
@@ -206,7 +206,7 @@ class Creative(Base):
     visual_direction = sa.Column(sa.Text)
     image_url = sa.Column(sa.String(2000))
     source = sa.Column(sa.Enum(CreativeSource), nullable=False, server_default=CreativeSource.AI.value)
-    is_selected = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    is_selected = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     ai_model = sa.Column(sa.String(100))
     generation_version = sa.Column(sa.Integer)
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())

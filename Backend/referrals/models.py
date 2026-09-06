@@ -38,5 +38,5 @@ class ReferralQualification(Base):
     order_id = sa.Column(sa.BigInteger, sa.ForeignKey("sales_orders.order_id", ondelete="CASCADE"), nullable=False)
     amount = sa.Column(sa.Numeric(18, 2), nullable=False, server_default=sa.text("0.00"))
     qualified_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
-    reward_issued = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("0"))
+    reward_issued = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("false"))
     reward_amount = sa.Column(sa.Numeric(18, 2), nullable=False, server_default=sa.text("0.00"))

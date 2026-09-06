@@ -23,7 +23,7 @@ class TimestampMixin:
 
 
 class SoftDeletedMixin:
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
 
 
 def utcnow():

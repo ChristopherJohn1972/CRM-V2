@@ -10,7 +10,7 @@ class DocumentType(Base):
     document_type_id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True)
     code = sa.Column(sa.String(50), nullable=False, unique=True)
     name = sa.Column(sa.String(100), nullable=False)
-    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_active = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
 
 
@@ -60,5 +60,5 @@ class DocumentVersion(Base):
     uploaded_by = sa.Column(sa.BigInteger, sa.ForeignKey("users.user_id", ondelete="SET NULL"))
     scan_status = sa.Column(sa.String(20), nullable=False, server_default=ScanStatus.PENDING)
     expires_at = sa.Column(sa.DateTime)
-    is_current = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("1"))
+    is_current = sa.Column(sa.Boolean, nullable=False, server_default=sa.text("true"))
     created_at = sa.Column(sa.DateTime, nullable=False, server_default=sa.func.now())
