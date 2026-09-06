@@ -1,14 +1,11 @@
 import os
 from pathlib import Path
 
-import pymysql
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
-
-pymysql.install_as_MySQLdb()
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
@@ -84,13 +81,13 @@ ASGI_APPLICATION = "config.asgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("CRM_DB_NAME", "crm_v2"),
-        "USER": os.getenv("CRM_DB_USER", "root"),
+        "USER": os.getenv("CRM_DB_USER", "postgres"),
         "PASSWORD": os.getenv("CRM_DB_PASSWORD", ""),
         "HOST": os.getenv("CRM_DB_HOST", "127.0.0.1"),
-        "PORT": os.getenv("CRM_DB_PORT", "3306"),
-        "OPTIONS": {"charset": "utf8mb4"},
+        "PORT": os.getenv("CRM_DB_PORT", "5432"),
+        "OPTIONS": {},
     }
 }
 

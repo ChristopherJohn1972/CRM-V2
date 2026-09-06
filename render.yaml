@@ -3,7 +3,8 @@ services:
     name: crm-backend
     runtime: python
     plan: free
-    buildCommand: pip install -r Backend/requirements.txt
+    rootDir: Backend
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -16,23 +17,23 @@ services:
         value: crm-backend.onrender.com
       - key: CRM_DB_HOST
         fromDatabase:
-          name: crm-mysql
+          name: crm-db
           property: host
       - key: CRM_DB_PORT
         fromDatabase:
-          name: crm-mysql
+          name: crm-db
           property: port
       - key: CRM_DB_NAME
         fromDatabase:
-          name: crm-mysql
+          name: crm-db
           property: database
       - key: CRM_DB_USER
         fromDatabase:
-          name: crm-mysql
+          name: crm-db
           property: user
       - key: CRM_DB_PASSWORD
         fromDatabase:
-          name: crm-mysql
+          name: crm-db
           property: password
       - key: CRM_JWT_SECRET
         generateValue: true
@@ -44,7 +45,7 @@ services:
         sync: false
 
 databases:
-  - name: crm-mysql
+  - name: crm-db
     plan: free
     databaseName: crm_v2
     ipAllowList: []
