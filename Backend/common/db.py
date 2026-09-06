@@ -13,13 +13,13 @@ def database_url():
     if url:
         return url
     host = os.getenv("CRM_DB_HOST", "127.0.0.1")
-    port = os.getenv("CRM_DB_PORT", "3306")
+    port = os.getenv("CRM_DB_PORT", "5432")
     name = os.getenv("CRM_DB_NAME", "crm_v2")
-    user = os.getenv("CRM_DB_USER", "root")
+    user = os.getenv("CRM_DB_USER", "postgres")
     password = os.getenv("CRM_DB_PASSWORD", "")
     return (
-        f"mysql+pymysql://{quote_plus(user)}:{quote_plus(password)}"
-        f"@{host}:{port}/{name}?charset=utf8mb4"
+        f"postgresql+psycopg2://{quote_plus(user)}:{quote_plus(password)}"
+        f"@{host}:{port}/{name}"
     )
 
 
