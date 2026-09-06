@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
+    "whitenoise",
     "rest_framework",
     "corsheaders",
     "common",
@@ -46,10 +47,26 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "common.middleware.RequestContextMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOWED_ORIGINS = [
+    h.strip()
+    for h in os.getenv("CRM_CORS_ORIGINS", "").split(",")
+    if h.strip()
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "origin",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 ROOT_URLCONF = "config.urls"
 
@@ -83,6 +100,9 @@ LANGUAGE_CODE = "en-us"
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+FRONTEND_DIR = STATIC_ROOT / "frontend"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

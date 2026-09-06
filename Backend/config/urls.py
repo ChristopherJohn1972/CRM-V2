@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from django.http import Http404, FileResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 
 from iam.views import ForgotPasswordView, LoginView, LogoutView, MeView, RegisterView, ResetPasswordView
@@ -17,6 +17,19 @@ def serve_storage(request, path=""):
     if not file_path.exists() or not file_path.is_file():
         raise Http404("File not found")
     return FileResponse(open(file_path, "rb"), content_type="application/octet-stream")
+
+
+def serve_frontend(request, path=""):
+    frontend_dir = getattr(settings, "FRONTEND_DIR", None)
+    if frontend_dir is None:
+        raise Http404("Frontend not configured")
+    file_path = frontend_dir / path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(open(file_path, "rb"))
+    index = frontend_dir / "index.html"
+    if index.exists():
+        return FileResponse(open(index, "rb"), content_type="text/html")
+    raise Http404("Frontend not found")
 
 
 urlpatterns = [
@@ -44,4 +57,5 @@ urlpatterns = [
     path("api/", include("referrals.urls")),
     path("api/", include("momentum.urls")),
     path("api/", include("ussd.urls")),
+    re_path(r"^(?P<path>.*)$", serve_frontend, name="serve-frontend"),
 ]
