@@ -5,7 +5,7 @@ services:
     plan: free
     rootDir: Backend
     buildCommand: pip install -r requirements.txt
-    startCommand: python manage.py create_tables && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py create_tables && python manage.py seed_data && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
@@ -43,6 +43,12 @@ services:
         sync: false
       - key: CRM_CORS_ORIGINS
         sync: false
+      - key: CRM_ADMIN_USERNAME
+        value: admin
+      - key: CRM_ADMIN_EMAIL
+        sync: false
+      - key: CRM_ADMIN_PASSWORD
+        generateValue: true
 
 databases:
   - name: crm-db
