@@ -1,0 +1,139 @@
+# =========================
+# ENVIRONMENT / SECRETS
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# SENSITIVE FILES (NEVER COMMIT)
+# =========================
+*password*.txt
+*Password*.txt
+*secret*.txt
+*api*.txt
+*key*.txt
+deepseek.txt
+NVIDIA.txt
+openrouter.txt
+Sql password.txt
+build cmd.txt
+*.sql
+*.sql.gz
+*.sql.bak
+crm_v2_backup.sql
+crmv2_database.sql
+
+# =========================
+# DOCUMENTS / DESIGN FILES
+# =========================
+*.docx
+*.doc
+*.mwb
+*.pdf
+
+# =========================
+# IMAGES (personal / non-code)
+# =========================
+*.jpeg
+*.jpg
+!Backend/public/*.jpg
+!Frontend/public/*.jpg
+*.png
+!Backend/public/*.png
+!Frontend/public/*.png
+
+# =========================
+# PYTHON
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# =========================
+# VIRTUAL ENVIRONMENTS
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# NODE
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# =========================
+# FRONTEND BUILD
+# =========================
+dist/
+build/
+.vite/
+
+# =========================
+# LOGS
+# =========================
+*.log
+logs/
+
+# =========================
+# DATABASE FILES
+# =========================
+*.sqlite
+*.sqlite3
+*.db
+
+# =========================
+# STORAGE / USER UPLOADS
+# =========================
+storage/
+test_storage/
+
+# =========================
+# DJANGO
+# =========================
+staticfiles/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# PRIVATE KEYS / CERTIFICATES
+# =========================
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+
+# =========================
+# TEMPORARY FILES
+# =========================
+*.tmp
+*.temp
+*.bak
+*.orig

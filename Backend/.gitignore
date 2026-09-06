@@ -1,0 +1,46 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Storage (user uploads, generated files)
+storage/
+test_storage/
+
+# Logs
+*.log
+
+# Django
+staticfiles/
+
+# Database dumps / backups
+*.sql
+*.sql.gz
+crm_v2_backup.sql
+crmv2_database.sql
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

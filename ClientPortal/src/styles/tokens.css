@@ -1,0 +1,91 @@
+:root {
+  /* Surfaces */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f0f2f5;
+  --color-surface-hover: #f8fafc;
+
+  /* Borders & dividers */
+  --color-border: #e1e6eb;
+  --color-border-strong: #cdd4dc;
+
+  /* Text */
+  --color-text: #1a2332;
+  --color-text-secondary: #5b6572;
+  --color-text-muted: #8a94a3;
+  --color-text-inverse: #ffffff;
+
+  /* Primary */
+  --color-primary: #1a56a0;
+  --color-primary-hover: #154a8c;
+  --color-primary-active: #123f77;
+  --color-primary-subtle: #e8f0fa;
+  --color-primary-soft: #d4e3f5;
+  --color-primary-border: #9db9dc;
+
+  /* Focus */
+  --color-focus: #1a56a0;
+
+  /* Semantic */
+  --color-success: #1f7a3d;
+  --color-success-subtle: #e6f4ea;
+  --color-warning: #a15c00;
+  --color-warning-subtle: #fdf1e1;
+  --color-danger: #b42318;
+  --color-danger-subtle: #fdecea;
+  --color-info: #1a56a0;
+  --color-info-subtle: #e8f0fa;
+  --color-muted: #6b7280;
+  --color-muted-subtle: #eef0f3;
+
+  /* Portal accent (Momentum) */
+  --color-momentum: #7c3aed;
+  --color-momentum-subtle: #f3f0ff;
+  --color-momentum-border: #c4b5fd;
+
+  /* Typography scale */
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Cascadia Code', 'SF Mono', Consolas, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  /* Spacing tokens */
+  --space-1: 0.125rem;
+  --space-2: 0.25rem;
+  --space-3: 0.5rem;
+  --space-4: 0.75rem;
+  --space-5: 1rem;
+  --space-6: 1.25rem;
+  --space-7: 1.5rem;
+  --space-8: 2rem;
+  --space-9: 2.5rem;
+  --space-10: 3rem;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(26, 35, 50, 0.06);
+  --shadow-md: 0 2px 6px rgba(26, 35, 50, 0.08);
+  --shadow-lg: 0 8px 24px rgba(26, 35, 50, 0.12);
+
+  /* Layout */
+  --header-height: 60px;
+  --sidebar-width: 240px;
+  --content-max: 1200px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 120ms;
+  --duration: 180ms;
+}
