@@ -288,6 +288,17 @@ class Command(BaseCommand):
             for rap in db.execute(sa.select(RoleAccessPolicy)).scalars().all():
                 existing_rap.add((rap.role_id, rap.access_policy_id))
 
+            system_role_codes = ["SUPER_ADMIN", "SALES_MANAGER", "SALES_REP", "READ_ONLY"]
+            for rc in system_role_codes:
+                if rc in role_map:
+                    db.execute(
+                        sa.delete(RolePermission).where(RolePermission.role_id == role_map[rc])
+                    )
+                    db.execute(
+                        sa.delete(RoleAccessPolicy).where(RoleAccessPolicy.role_id == role_map[rc])
+                    )
+            db.flush()
+
             if "SUPER_ADMIN" in role_map:
                 rid = role_map["SUPER_ADMIN"]
                 for pid in perm_map.values():
@@ -395,24 +406,20 @@ class Command(BaseCommand):
                 "is_system_role": False, "is_active": True,
             })
 
-            existing_scout_rp = set()
-            for rp in db.execute(
-                sa.select(RolePermission).where(RolePermission.role_id == scout_role.role_id)
-            ).scalars().all():
-                existing_scout_rp.add(rp.permission_id)
+            db.execute(
+                sa.delete(RolePermission).where(RolePermission.role_id == scout_role.role_id)
+            )
+            db.execute(
+                sa.delete(RoleAccessPolicy).where(RoleAccessPolicy.role_id == scout_role.role_id)
+            )
+            db.flush()
 
             for code in SCOUT_PERMISSIONS:
-                if code in perm_map and perm_map[code] not in existing_scout_rp:
+                if code in perm_map:
                     db.add(RolePermission(role_id=scout_role.role_id, permission_id=perm_map[code]))
 
             if "GLOBAL_ALL" in policy_map:
-                existing_scout_rap = set()
-                for rap in db.execute(
-                    sa.select(RoleAccessPolicy).where(RoleAccessPolicy.role_id == scout_role.role_id)
-                ).scalars().all():
-                    existing_scout_rap.add(rap.access_policy_id)
-                if policy_map["GLOBAL_ALL"] not in existing_scout_rap:
-                    db.add(RoleAccessPolicy(role_id=scout_role.role_id, access_policy_id=policy_map["GLOBAL_ALL"]))
+                db.add(RoleAccessPolicy(role_id=scout_role.role_id, access_policy_id=policy_map["GLOBAL_ALL"]))
 
             scout_user = db.execute(
                 sa.select(User).where(User.username == SCOUT_USERNAME)
