@@ -15,6 +15,14 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
+SECURE_SSL_REDIRECT = not DEBUG
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -87,7 +95,9 @@ DATABASES = {
         "PASSWORD": os.getenv("CRM_DB_PASSWORD", ""),
         "HOST": os.getenv("CRM_DB_HOST", "127.0.0.1"),
         "PORT": os.getenv("CRM_DB_PORT", "5432"),
-        "OPTIONS": {},
+        "OPTIONS": {
+            "sslmode": os.getenv("CRM_DB_SSLMODE", "require"),
+        },
     }
 }
 

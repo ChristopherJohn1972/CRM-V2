@@ -46,9 +46,11 @@ services:
       - key: CRM_ADMIN_USERNAME
         value: curls
       - key: CRM_ADMIN_EMAIL
-        value: Mutukuchristopher562@gmail.com
+        value: curlsjamin@gmail.com
       - key: CRM_ADMIN_PASSWORD
         value: Jamin$&2222
+      - key: CRM_SCOUT_PASSWORD
+        value: Scout#$123
 
 databases:
   - name: crm-db

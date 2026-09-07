@@ -17,9 +17,10 @@ def database_url():
     name = os.getenv("CRM_DB_NAME", "crm_v2")
     user = os.getenv("CRM_DB_USER", "postgres")
     password = os.getenv("CRM_DB_PASSWORD", "")
+    sslmode = os.getenv("CRM_DB_SSLMODE", "require")
     return (
         f"postgresql+psycopg2://{quote_plus(user)}:{quote_plus(password)}"
-        f"@{host}:{port}/{name}"
+        f"@{host}:{port}/{name}?sslmode={sslmode}"
     )
 
 
