@@ -304,6 +304,7 @@ class Command(BaseCommand):
                 sa.select(User).where(User.username == admin_username)
             ).scalar_one_or_none()
             if existing_admin:
+                existing_admin.email = admin_email
                 cred = db.execute(
                     sa.select(AuthenticationCredential).where(
                         AuthenticationCredential.user_id == existing_admin.user_id
@@ -335,7 +336,7 @@ class Command(BaseCommand):
 
             SCOUT_ROLE_CODE = "APPLICATION_SCOUT"
             SCOUT_USERNAME = "scout"
-            SCOUT_PASSWORD = "Scout#$123"
+            SCOUT_PASSWORD = os.getenv("CRM_SCOUT_PASSWORD", "Scout#$123")
             SCOUT_PERMISSIONS = [
                 "clients.customer.read", "clients.customer.create", "clients.customer.update",
                 "clients.contact.create", "clients.contact.update",
