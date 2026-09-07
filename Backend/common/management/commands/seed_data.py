@@ -234,10 +234,19 @@ def _get_or_create(db, model, unique_field, value, extra=None):
     existing = db.execute(sa.select(model).where(col == value)).scalar_one_or_none()
     if existing:
         return existing
-    obj = model(**{unique_field: value, **(extra or {})})
-    db.add(obj)
-    db.flush()
-    return obj
+    try:
+        obj = model(**{unique_field: value, **(extra or {})})
+        db.add(obj)
+        db.flush()
+        return obj
+    except Exception:
+        db.rollback()
+        name_val = (extra or {}).get("name")
+        if name_val and hasattr(model, "name"):
+            existing = db.execute(sa.select(model).where(model.name == name_val)).scalar_one_or_none()
+            if existing:
+                return existing
+        raise
 
 
 class Command(BaseCommand):
@@ -254,12 +263,16 @@ class Command(BaseCommand):
                 })
                 count += 1
 
+            db.execute(sa.delete(RolePermission))
+            db.execute(sa.delete(Permission))
+            db.flush()
+
             for name, code, resource, action in PERMISSIONS:
-                _get_or_create(db, Permission, "code", code, {
-                    "name": name, "resource": resource, "action": action,
-                    "description": name, "is_active": True,
-                })
+                perm = Permission(name=name, code=code, resource=resource, action=action,
+                                  description=name, is_active=True)
+                db.add(perm)
                 count += 1
+            db.flush()
 
             for name, code, desc, is_system in ROLES:
                 _get_or_create(db, Role, "code", code, {
@@ -280,50 +293,6 @@ class Command(BaseCommand):
             for ap in db.execute(sa.select(AccessPolicy)).scalars().all():
                 policy_map[ap.code] = ap.access_policy_id
 
-            existing_rp = set()
-            for rp in db.execute(sa.select(RolePermission)).scalars().all():
-                existing_rp.add((rp.role_id, rp.permission_id))
-
-            existing_rap = set()
-            for rap in db.execute(sa.select(RoleAccessPolicy)).scalars().all():
-                existing_rap.add((rap.role_id, rap.access_policy_id))
-
-            system_role_codes = ["SUPER_ADMIN", "SALES_MANAGER", "SALES_REP", "READ_ONLY"]
-            for rc in system_role_codes:
-                if rc in role_map:
-                    db.execute(
-                        sa.delete(RolePermission).where(RolePermission.role_id == role_map[rc])
-                    )
-                    db.execute(
-                        sa.delete(RoleAccessPolicy).where(RoleAccessPolicy.role_id == role_map[rc])
-                    )
-            db.flush()
-
-            if "SUPER_ADMIN" in role_map:
-                rid = role_map["SUPER_ADMIN"]
-                for pid in perm_map.values():
-                    if (rid, pid) not in existing_rp:
-                        db.add(RolePermission(role_id=rid, permission_id=pid))
-                if "GLOBAL_ALL" in policy_map:
-                    apid = policy_map["GLOBAL_ALL"]
-                    if (rid, apid) not in existing_rap:
-                        db.add(RoleAccessPolicy(role_id=rid, access_policy_id=apid))
-
-            perm_config = {
-                "SALES_MANAGER": (SALES_MANAGER_PERMISSIONS, "SCOPE_DEPARTMENT"),
-                "SALES_REP": (SALES_REP_PERMISSIONS, "SCOPE_ASSIGNED"),
-                "READ_ONLY": (READ_ONLY_PERMISSIONS, "SCOPE_OWN"),
-            }
-            for role_code, (codes, policy_code) in perm_config.items():
-                if role_code not in role_map:
-                    continue
-                rid = role_map[role_code]
-                for code in codes:
-                    if code in perm_map and (rid, perm_map[code]) not in existing_rp:
-                        db.add(RolePermission(role_id=rid, permission_id=perm_map[code]))
-                if policy_code in policy_map and (rid, policy_map[policy_code]) not in existing_rap:
-                    db.add(RoleAccessPolicy(role_id=rid, access_policy_id=policy_map[policy_code]))
-
             from clients.models import ContactRole, RelationshipType, Branch
             from activities.models import ActivityType
             from documents.models import DocumentType
@@ -338,6 +307,57 @@ class Command(BaseCommand):
             for code, name in DOCUMENT_TYPES:
                 _get_or_create(db, DocumentType, "code", code, {"name": name, "is_active": True})
             _get_or_create(db, Branch, "code", "HO", {"name": "Head Office", "is_active": True})
+
+            system_role_codes = ["SUPER_ADMIN", "SALES_MANAGER", "SALES_REP", "READ_ONLY"]
+            for rc in system_role_codes:
+                if rc in role_map:
+                    db.execute(
+                        sa.delete(RolePermission).where(RolePermission.role_id == role_map[rc])
+                    )
+                    db.execute(
+                        sa.delete(RoleAccessPolicy).where(RoleAccessPolicy.role_id == role_map[rc])
+                    )
+            db.flush()
+
+            existing_rp = set()
+            for rp in db.execute(sa.select(RolePermission)).scalars().all():
+                existing_rp.add((rp.role_id, rp.permission_id))
+
+            existing_rap = set()
+            for rap in db.execute(sa.select(RoleAccessPolicy)).scalars().all():
+                existing_rap.add((rap.role_id, rap.access_policy_id))
+
+            if "SUPER_ADMIN" in role_map:
+                rid = role_map["SUPER_ADMIN"]
+                added = 0
+                for pid in perm_map.values():
+                    if (rid, pid) not in existing_rp:
+                        db.add(RolePermission(role_id=rid, permission_id=pid))
+                        added += 1
+                self.stdout.write(f"SUPER_ADMIN: granted {added}/{len(perm_map)} permissions")
+                if "GLOBAL_ALL" in policy_map:
+                    apid = policy_map["GLOBAL_ALL"]
+                    if (rid, apid) not in existing_rap:
+                        db.add(RoleAccessPolicy(role_id=rid, access_policy_id=apid))
+                        self.stdout.write("SUPER_ADMIN: granted GLOBAL_ALL policy")
+
+            perm_config = {
+                "SALES_MANAGER": (SALES_MANAGER_PERMISSIONS, "SCOPE_DEPARTMENT"),
+                "SALES_REP": (SALES_REP_PERMISSIONS, "SCOPE_ASSIGNED"),
+                "READ_ONLY": (READ_ONLY_PERMISSIONS, "SCOPE_OWN"),
+            }
+            for role_code, (codes, policy_code) in perm_config.items():
+                if role_code not in role_map:
+                    continue
+                rid = role_map[role_code]
+                added = 0
+                for code in codes:
+                    if code in perm_map and (rid, perm_map[code]) not in existing_rp:
+                        db.add(RolePermission(role_id=rid, permission_id=perm_map[code]))
+                        added += 1
+                self.stdout.write(f"{role_code}: granted {added}/{len(codes)} permissions")
+                if policy_code in policy_map and (rid, policy_map[policy_code]) not in existing_rap:
+                    db.add(RoleAccessPolicy(role_id=rid, access_policy_id=policy_map[policy_code]))
 
             admin_username = os.getenv("CRM_ADMIN_USERNAME", "admin")
             admin_email = os.getenv("CRM_ADMIN_EMAIL", "admin@crm.local")
@@ -381,22 +401,20 @@ class Command(BaseCommand):
             SCOUT_USERNAME = "scout"
             SCOUT_PASSWORD = os.getenv("CRM_SCOUT_PASSWORD", "Scout#$123")
             SCOUT_PERMISSIONS = [
-                "clients.customer.read", "clients.customer.create", "clients.customer.update",
-                "clients.contact.create", "clients.contact.update",
-                "clients.relationship.create", "clients.relationship.read", "clients.address.write",
-                "activities.activity.read", "activities.activity.create", "activities.activity.update",
-                "activities.note.read", "activities.note.create", "activities.note.update",
+                "clients.customer.read",
+                "clients.contact.read",
+                "clients.relationship.read",
+                "activities.activity.read",
+                "activities.note.read",
                 "communications.sms.read", "communications.email.read", "communications.call.read",
-                "documents.document.read", "documents.document.create", "documents.document.download",
+                "documents.document.read",
                 "accounting.summary.read", "accounting.transactions.read",
                 "customer360.view",
-                "quotes.quote.read", "quotes.quote.create", "quotes.quote.update",
-                "quotes.quote.calculate", "quotes.quote.preview", "quotes.quote.download_pdf",
-                "sales_order.sales_order.read", "sales_order.sales_order.create", "sales_order.sales_order.update",
-                "sales_order.sales_order.calculate", "sales_order.payment.read", "sales_order.receipt.read",
-                "campaign.view", "campaign.create", "campaign.edit",
-                "lead.view", "lead.create", "lead.edit", "lead.assign",
-                "referral.view", "referral.manage",
+                "quotes.quote.read", "quotes.quote.preview", "quotes.quote.download_pdf",
+                "sales_order.sales_order.read", "sales_order.payment.read", "sales_order.receipt.read",
+                "campaign.view",
+                "lead.view",
+                "referral.view",
                 "momentum.view",
             ]
 
