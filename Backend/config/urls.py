@@ -1,12 +1,16 @@
 import os
 from pathlib import Path
 
-from django.http import Http404, FileResponse
+from django.http import Http404, FileResponse, JsonResponse
 from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 
 from iam.views import ForgotPasswordView, LoginView, LogoutView, MeView, RegisterView, ResetPasswordView
 from config import settings
+
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
 
 
 def serve_storage(request, path=""):
@@ -57,5 +61,6 @@ urlpatterns = [
     path("api/", include("referrals.urls")),
     path("api/", include("momentum.urls")),
     path("api/", include("ussd.urls")),
+    path("api/health", csrf_exempt(health_check), name="health-check"),
     re_path(r"^(?P<path>.*)$", serve_frontend, name="serve-frontend"),
 ]

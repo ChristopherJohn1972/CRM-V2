@@ -77,8 +77,8 @@ CRM_STORAGE_BACKEND=dev
 CRM_SCOUT_SECURITY_EMAIL=curlsjamin@gmail.com
 CRM_ADMIN_USERNAME=curls
 CRM_ADMIN_EMAIL=curlsjamin@gmail.com
-CRM_ADMIN_PASSWORD=Jamin$&2222
-CRM_SCOUT_PASSWORD=Scout#$123
+CRM_ADMIN_PASSWORD=your_secure_admin_password
+CRM_SCOUT_PASSWORD=your_secure_scout_password
 EOF
 ```
 
@@ -169,7 +169,7 @@ Then redeploy.
 
 1. Visit `https://YOUR_USERNAME.pythonanywhere.com/api/auth/login` — should return 405 Method Not Allowed (not 404)
 2. Visit `https://crm-v2-mu.vercel.app` — should load the login page
-3. Login with `curls` / `Jamin$&2222`
+3. Login with admin credentials (set via env vars)
 
 ---
 
@@ -190,8 +190,8 @@ Then redeploy.
 | `CRM_CORS_ORIGINS` | `https://crm-v2-mu.vercel.app` | Allowed origins |
 | `CRM_ADMIN_USERNAME` | `curls` | Admin username |
 | `CRM_ADMIN_EMAIL` | `curlsjamin@gmail.com` | Admin email |
-| `CRM_ADMIN_PASSWORD` | `Jamin$&2222` | Admin password |
-| `CRM_SCOUT_PASSWORD` | `Scout#$123` | Scout password |
+| `CRM_ADMIN_PASSWORD` | `your_secure_admin_password` | Admin password |
+| `CRM_SCOUT_PASSWORD` | `your_secure_scout_password` | Scout password |
 
 ---
 

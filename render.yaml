@@ -5,7 +5,7 @@ services:
     plan: free
     rootDir: Backend
     buildCommand: pip install -r requirements.txt
-    startCommand: python manage.py create_tables && python manage.py seed_data && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py create_tables && python manage.py seed_data && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120 --keep-alive 5 --preload
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
@@ -44,13 +44,13 @@ services:
       - key: CRM_CORS_ORIGINS
         value: https://crm-v2-mu.vercel.app
       - key: CRM_ADMIN_USERNAME
-        value: curls
+        sync: false
       - key: CRM_ADMIN_EMAIL
-        value: curlsjamin@gmail.com
+        sync: false
       - key: CRM_ADMIN_PASSWORD
-        value: Jamin$&2222
+        sync: false
       - key: CRM_SCOUT_PASSWORD
-        value: Scout#$123
+        sync: false
       - key: CRM_EMAIL_HOST
         sync: false
       - key: CRM_EMAIL_PORT
