@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy import JSON
 
 from common.db import Base
 from event_engine.enums import EventOutboxStatus
