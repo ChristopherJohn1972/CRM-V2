@@ -1,6 +1,8 @@
-Username: scout3
+Application user
+Username: scout
 Password: Scout#$123
 
+Super admin
 Username: curls
 Password: Jamin$&2222
 

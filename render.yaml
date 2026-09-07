@@ -51,6 +51,18 @@ services:
         value: Jamin$&2222
       - key: CRM_SCOUT_PASSWORD
         value: Scout#$123
+      - key: CRM_EMAIL_HOST
+        sync: false
+      - key: CRM_EMAIL_PORT
+        value: "587"
+      - key: CRM_EMAIL_USE_TLS
+        value: "1"
+      - key: CRM_EMAIL_HOST_USER
+        sync: false
+      - key: CRM_EMAIL_HOST_PASSWORD
+        sync: false
+      - key: CRM_DEFAULT_FROM_EMAIL
+        value: "CRM V2 <noreply@crm.local>"
 
 databases:
   - name: crm-db

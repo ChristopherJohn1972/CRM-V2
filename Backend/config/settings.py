@@ -171,6 +171,14 @@ OPENAI_MODEL = os.getenv("CRM_OPENAI_MODEL", "dall-e-3")
 
 SCOUT_SECURITY_RECIPIENT = os.getenv("CRM_SCOUT_SECURITY_EMAIL", "")
 
+EMAIL_BACKEND = os.getenv("CRM_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("CRM_EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("CRM_EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("CRM_EMAIL_USE_TLS", "1") == "1"
+EMAIL_HOST_USER = os.getenv("CRM_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("CRM_EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("CRM_DEFAULT_FROM_EMAIL", "CRM V2 <noreply@crm.local>")
+
 PASSWORD_HASHER = "bcrypt"
 
 # Portal boundary settings
