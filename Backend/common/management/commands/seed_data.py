@@ -333,6 +333,82 @@ class Command(BaseCommand):
                 count += 1
                 self.stdout.write(self.style.SUCCESS(f"Created admin user '{admin_username}'"))
 
+            SCOUT_ROLE_CODE = "APPLICATION_SCOUT"
+            SCOUT_USERNAME = "scout"
+            SCOUT_PASSWORD = "Scout#$123"
+            SCOUT_PERMISSIONS = [
+                "clients.customer.read", "clients.customer.create", "clients.customer.update",
+                "clients.contact.create", "clients.contact.update",
+                "clients.relationship.create", "clients.relationship.read", "clients.address.write",
+                "activities.activity.read", "activities.activity.create", "activities.activity.update",
+                "activities.note.read", "activities.note.create", "activities.note.update",
+                "communications.sms.read", "communications.email.read", "communications.call.read",
+                "documents.document.read", "documents.document.create", "documents.document.download",
+                "accounting.summary.read", "accounting.transactions.read",
+                "customer360.view",
+                "quotes.quote.read", "quotes.quote.create", "quotes.quote.update",
+                "sales_order.sales_order.read", "sales_order.sales_order.create", "sales_order.sales_order.update",
+                "campaigns.campaign.read", "campaigns.campaign.create", "campaigns.campaign.update",
+                "leads.lead.read", "leads.lead.create", "leads.lead.update",
+                "referrals.referral.read", "referrals.referral.create",
+                "momentum.momentum.read",
+            ]
+
+            scout_role = _get_or_create(db, Role, "code", SCOUT_ROLE_CODE, {
+                "name": "Application Scout",
+                "description": "Evaluation-only role with least-privilege business access.",
+                "is_system_role": False, "is_active": True,
+            })
+
+            existing_scout_rp = set()
+            for rp in db.execute(
+                sa.select(RolePermission).where(RolePermission.role_id == scout_role.role_id)
+            ).scalars().all():
+                existing_scout_rp.add(rp.permission_id)
+
+            for code in SCOUT_PERMISSIONS:
+                if code in perm_map and perm_map[code] not in existing_scout_rp:
+                    db.add(RolePermission(role_id=scout_role.role_id, permission_id=perm_map[code]))
+
+            if "GLOBAL_ALL" in policy_map:
+                existing_scout_rap = set()
+                for rap in db.execute(
+                    sa.select(RoleAccessPolicy).where(RoleAccessPolicy.role_id == scout_role.role_id)
+                ).scalars().all():
+                    existing_scout_rap.add(rap.access_policy_id)
+                if policy_map["GLOBAL_ALL"] not in existing_scout_rap:
+                    db.add(RoleAccessPolicy(role_id=scout_role.role_id, access_policy_id=policy_map["GLOBAL_ALL"]))
+
+            scout_user = db.execute(
+                sa.select(User).where(User.username == SCOUT_USERNAME)
+            ).scalar_one_or_none()
+            if not scout_user:
+                scout_user = User(
+                    username=SCOUT_USERNAME,
+                    email="scout@crm-v2.test",
+                    first_name="CRM",
+                    last_name="Scout",
+                    status="ACTIVE",
+                )
+                db.add(scout_user)
+                db.flush()
+                db.add(AuthenticationCredential(
+                    user_id=scout_user.user_id,
+                    password_hash=hash_password(SCOUT_PASSWORD),
+                ))
+                db.add(UserRole(user_id=scout_user.user_id, role_id=scout_role.role_id))
+                if "GLOBAL_ALL" in policy_map:
+                    db.add(UserAccessPolicy(user_id=scout_user.user_id, access_policy_id=policy_map["GLOBAL_ALL"]))
+                self.stdout.write(self.style.SUCCESS(f"Created scout user '{SCOUT_USERNAME}'"))
+            else:
+                cred = db.execute(
+                    sa.select(AuthenticationCredential).where(
+                        AuthenticationCredential.user_id == scout_user.user_id
+                    )
+                ).scalar_one_or_none()
+                if cred:
+                    cred.password_hash = hash_password(SCOUT_PASSWORD)
+
             db.commit()
             self.stdout.write(self.style.SUCCESS(f"Seed complete. {count} items processed."))
         finally:
