@@ -303,7 +303,16 @@ class Command(BaseCommand):
             existing_admin = db.execute(
                 sa.select(User).where(User.username == admin_username)
             ).scalar_one_or_none()
-            if not existing_admin:
+            if existing_admin:
+                cred = db.execute(
+                    sa.select(AuthenticationCredential).where(
+                        AuthenticationCredential.user_id == existing_admin.user_id
+                    )
+                ).scalar_one_or_none()
+                if cred:
+                    cred.password_hash = hash_password(admin_password)
+                self.stdout.write(f"Updated admin user '{admin_username}' password.")
+            else:
                 user = User(
                     username=admin_username,
                     email=admin_email,
@@ -323,8 +332,6 @@ class Command(BaseCommand):
                     db.add(UserAccessPolicy(user_id=user.user_id, access_policy_id=policy_map["GLOBAL_ALL"]))
                 count += 1
                 self.stdout.write(self.style.SUCCESS(f"Created admin user '{admin_username}'"))
-            else:
-                self.stdout.write(f"Admin user '{admin_username}' already exists, skipping.")
 
             db.commit()
             self.stdout.write(self.style.SUCCESS(f"Seed complete. {count} items processed."))
