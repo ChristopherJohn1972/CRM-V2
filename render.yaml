@@ -44,11 +44,11 @@ services:
       - key: CRM_CORS_ORIGINS
         value: https://crm-v2-mu.vercel.app
       - key: CRM_ADMIN_USERNAME
-        value: admin
+        value: curls
       - key: CRM_ADMIN_EMAIL
-        sync: false
+        value: Mutukuchristopher562@gmail.com
       - key: CRM_ADMIN_PASSWORD
-        generateValue: true
+        value: Jamin$&2222
 
 databases:
   - name: crm-db
