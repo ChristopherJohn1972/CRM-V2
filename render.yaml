@@ -14,7 +14,7 @@ services:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DJANGO_ALLOWED_HOSTS
-        value: crm-backend.onrender.com
+        value: crm-backend-49fn.onrender.com
       - key: CRM_DB_HOST
         fromDatabase:
           name: crm-db
@@ -42,7 +42,7 @@ services:
       - key: CRM_SCOUT_SECURITY_EMAIL
         sync: false
       - key: CRM_CORS_ORIGINS
-        sync: false
+        value: https://crm-v2-mu.vercel.app
       - key: CRM_ADMIN_USERNAME
         value: admin
       - key: CRM_ADMIN_EMAIL
