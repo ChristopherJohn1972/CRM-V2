@@ -12,6 +12,7 @@ from iam.models import (
     RoleAccessPolicy,
     RolePermission,
     User,
+    UserAccessPolicy,
     UserRole,
 )
 from iam.services import hash_password
