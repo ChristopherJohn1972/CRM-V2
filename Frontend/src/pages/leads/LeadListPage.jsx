@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { listLeads, deleteLead } from '../../api/leads';
+import { useAuth } from '../../auth/AuthContext';
+import { PermissionGate } from '../../components/PermissionGate';
 import PageHeader from '../../components/PageHeader';
 import SearchBar from '../../components/SearchBar';
 import FilterBar from '../../components/FilterBar';
@@ -7,6 +9,7 @@ import EmptyState from '../../components/EmptyState';
 import ErrorState from '../../components/ErrorState';
 import SkeletonTable from '../../components/SkeletonTable';
 import LeadPanel from '../../components/leads/LeadPanel';
+import { PERMISSIONS } from '../../utils/constants';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All statuses' },
@@ -38,6 +41,7 @@ const STATUS_COLORS = {
 };
 
 export default function LeadListPage() {
+  const { hasPermission } = useAuth();
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,6 +49,10 @@ export default function LeadListPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
+
+  const canEdit = hasPermission(PERMISSIONS.LEAD_UPDATE);
+  const canDelete = hasPermission(PERMISSIONS.LEAD_DELETE);
+  const showActions = canEdit || canDelete;
 
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelMode, setPanelMode] = useState('create');
@@ -150,7 +158,9 @@ export default function LeadListPage() {
         title="Leads"
         subtitle="Capture, qualify and manage prospects"
         actions={
-          <button className="btn btn--primary" onClick={handleNewLead}>+ New Lead</button>
+          <PermissionGate permission={PERMISSIONS.LEAD_CREATE}>
+            <button className="btn btn--primary" onClick={handleNewLead}>+ New Lead</button>
+          </PermissionGate>
         }
       />
 
@@ -189,7 +199,9 @@ export default function LeadListPage() {
             title="No leads yet"
             description="Capture your first lead to start tracking prospects."
             action={
-              <button className="btn btn--primary" onClick={handleNewLead}>+ New Lead</button>
+              <PermissionGate permission={PERMISSIONS.LEAD_CREATE}>
+                <button className="btn btn--primary" onClick={handleNewLead}>+ New Lead</button>
+              </PermissionGate>
             }
           />
         ) : (
@@ -202,7 +214,7 @@ export default function LeadListPage() {
                 <th>Company</th>
                 <th>Status</th>
                 <th>Score</th>
-                <th style={{ width: 80 }}></th>
+                {showActions && <th style={{ width: 80 }}></th>}
               </tr>
             </thead>
             <tbody>
@@ -223,6 +235,7 @@ export default function LeadListPage() {
                     </span>
                   </td>
                   <td>{l.qualification_score ?? '—'}</td>
+                  {showActions && (
                   <td>
                     <div className="lead-actions-cell">
                       <button
@@ -233,6 +246,7 @@ export default function LeadListPage() {
                       </button>
                     </div>
                   </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -260,8 +274,12 @@ export default function LeadListPage() {
           onClick={(e) => e.stopPropagation()}
         >
           <button className="lead-menu__item" onClick={() => { handleViewLead(openMenuId); setOpenMenuId(null); }}>View Lead</button>
-          <button className="lead-menu__item" onClick={() => { handleEditLead(openMenuId); setOpenMenuId(null); }}>Edit Lead</button>
-          <button className="lead-menu__item lead-menu__item--danger" onClick={() => { handleDeleteLead(openMenuId); setOpenMenuId(null); }}>Delete Lead</button>
+          {canEdit && (
+            <button className="lead-menu__item" onClick={() => { handleEditLead(openMenuId); setOpenMenuId(null); }}>Edit Lead</button>
+          )}
+          {canDelete && (
+            <button className="lead-menu__item lead-menu__item--danger" onClick={() => { handleDeleteLead(openMenuId); setOpenMenuId(null); }}>Delete Lead</button>
+          )}
         </div>
       )}
 

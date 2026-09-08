@@ -13,6 +13,7 @@ import {
   CAMPAIGN_TYPE_LABELS,
   PERMISSIONS,
 } from '../../utils/constants';
+import { PermissionGate } from '../../components/PermissionGate';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
@@ -35,6 +36,7 @@ export default function CampaignCommandCenter() {
   const [deleting, setDeleting] = useState(false);
   const menuRef = useRef(null);
 
+  const canCreate = hasPermission(PERMISSIONS.CAMPAIGN_CREATE);
   const canUpdate = hasPermission(PERMISSIONS.CAMPAIGN_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.CAMPAIGN_DELETE);
 
@@ -104,9 +106,11 @@ export default function CampaignCommandCenter() {
         title="Campaigns"
         subtitle="Create, launch, monitor and compare campaigns"
         actions={
-          <Link to="/campaigns/new" className="btn btn--primary">
-            + New Campaign
-          </Link>
+          <PermissionGate permission={PERMISSIONS.CAMPAIGN_CREATE}>
+            <Link to="/campaigns/new" className="btn btn--primary">
+              + New Campaign
+            </Link>
+          </PermissionGate>
         }
       />
 
@@ -145,9 +149,11 @@ export default function CampaignCommandCenter() {
             title="No campaigns yet"
             description="Create your first campaign to start tracking leads and conversions."
             action={
-              <Link to="/campaigns/new" className="btn btn--primary">
-                + New Campaign
-              </Link>
+              <PermissionGate permission={PERMISSIONS.CAMPAIGN_CREATE}>
+                <Link to="/campaigns/new" className="btn btn--primary">
+                  + New Campaign
+                </Link>
+              </PermissionGate>
             }
           />
         ) : (

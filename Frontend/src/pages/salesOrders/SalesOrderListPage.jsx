@@ -16,6 +16,7 @@ import { formatDate } from '../../utils/format';
 import { getOrderStatusLabel, getOrderStatusColor, getSourceLabel, getPaymentOverallStatusLabel, getPaymentOverallStatusVariant, formatOrderAmount } from '../../utils/salesOrders';
 import { useDebouncedValue } from '../../utils/useDebouncedValue';
 import { PERMISSIONS } from '../../utils/constants';
+import { PermissionGate } from '../../components/PermissionGate';
 function StatCard({ label, value, variant = 'neutral' }) {
   return (<div className={`quote-stat-card quote-stat-card--${variant}`}><div className="quote-stat-card__value">{value}</div><div className="quote-stat-card__label">{label}</div></div>);
 }
@@ -40,6 +41,7 @@ export function SalesOrderListPage() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
+  const canCreate = hasPermission(PERMISSIONS.SALES_ORDER_CREATE);
   const canUpdate = hasPermission(PERMISSIONS.SALES_ORDER_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.SALES_ORDER_DELETE);
   const showActions = canUpdate || canDelete;
@@ -135,7 +137,7 @@ export function SalesOrderListPage() {
   const emptyBody = debouncedSearch || filters.status || filters.source ? 'Try adjusting your search or filters.' : 'Create your first sales order to get started.';
   return (
     <div>
-      <PageHeader title="Sales Orders" subtitle="Manage orders, payments and receipts." actions={<Button variant="primary" onClick={() => navigate('/sales-orders/new')}>+ New Order</Button>} />
+      <PageHeader title="Sales Orders" subtitle="Manage orders, payments and receipts." actions={<PermissionGate permission={PERMISSIONS.SALES_ORDER_CREATE}><Button variant="primary" onClick={() => navigate('/sales-orders/new')}>+ New Order</Button></PermissionGate>} />
       <div className="quote-stat-grid">
         <StatCard label="Total Orders" value={summary.total} />
         <StatCard label="Drafts" value={summary.drafts} variant="muted" />
@@ -164,7 +166,7 @@ export function SalesOrderListPage() {
         <DataTable columns={columns} rows={[]} loading />
       ) : data.results.length === 0 ? (
         <div className="table-wrap">
-          <EmptyState title={emptyTitle} body={emptyBody} action={debouncedSearch || filters.status || filters.source ? <Button variant="secondary" onClick={() => { setSearch(''); setFilters({ status: '', source: '' }); setPage(1); }}>Clear filters</Button> : <Button variant="primary" onClick={() => navigate('/sales-orders/new')}>Create Order</Button>} />
+          <EmptyState title={emptyTitle} body={emptyBody} action={debouncedSearch || filters.status || filters.source ? <Button variant="secondary" onClick={() => { setSearch(''); setFilters({ status: '', source: '' }); setPage(1); }}>Clear filters</Button> : <PermissionGate permission={PERMISSIONS.SALES_ORDER_CREATE}><Button variant="primary" onClick={() => navigate('/sales-orders/new')}>Create Order</Button></PermissionGate>} />
         </div>
       ) : (
         <>
