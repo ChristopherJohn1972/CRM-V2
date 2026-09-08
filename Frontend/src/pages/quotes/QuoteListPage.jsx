@@ -246,9 +246,7 @@ export function QuoteListPage() {
         subtitle="Create, manage and send professional quotations."
         actions={
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <Button variant="primary" onClick={() => navigate('/studio')}>
-              + New Quote
-            </Button>
+            {createButton}
           </div>
         }
       />
