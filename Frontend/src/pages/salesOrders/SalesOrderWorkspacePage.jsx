@@ -7,6 +7,8 @@ import {
   listPayments, recordPayment, confirmPayment, reversePayment,
   listReceipts, voidReceipt, getReceipt,
 } from '../../api/salesOrders';
+import { useAuth } from '../../auth/AuthContext';
+import { PermissionGate } from '../../components/PermissionGate';
 import PageHeader from '../../components/PageHeader';
 import Button from '../../components/Button';
 import Field from '../../components/Field';
@@ -23,6 +25,7 @@ import {
   getReceiptStatusLabel, getReceiptStatusColor,
   PAYMENT_METHOD_LABELS,
 } from '../../utils/salesOrders';
+import { PERMISSIONS } from '../../utils/constants';
 
 function cleanEnum(value) {
   if (!value || typeof value !== 'string') return value;
@@ -117,6 +120,8 @@ export function SalesOrderWorkspacePage() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { notify } = useToast();
+  const { hasPermission } = useAuth();
+  const canUpdate = hasPermission(PERMISSIONS.SALES_ORDER_UPDATE);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -293,7 +298,9 @@ export function SalesOrderWorkspacePage() {
 
             {editable && (
               <div className="so-doc-actions">
-                <Button variant="secondary" size="sm" onClick={handleAddItem}>Add Item</Button>
+                <PermissionGate permission={PERMISSIONS.SALES_ORDER_UPDATE}>
+                  <Button variant="secondary" size="sm" onClick={handleAddItem}>Add Item</Button>
+                </PermissionGate>
               </div>
             )}
           </div>
@@ -303,7 +310,9 @@ export function SalesOrderWorkspacePage() {
           <div className="so-doc-content">
             {!['FULFILLED', 'CANCELLED'].includes(cleanEnum(order.status)) && (
               <div className="so-doc-actions">
-                <Button variant="primary" size="sm" onClick={() => setPaymentDialogOpen(true)}>Record Payment</Button>
+                <PermissionGate permission={PERMISSIONS.SALES_ORDER_UPDATE}>
+                  <Button variant="primary" size="sm" onClick={() => setPaymentDialogOpen(true)}>Record Payment</Button>
+                </PermissionGate>
               </div>
             )}
             {payments.length === 0 ? (
@@ -321,8 +330,8 @@ export function SalesOrderWorkspacePage() {
                         <td><StatusBadge label={getPaymentStatusLabel(p.status)} style={{ background: getPaymentStatusColor(p.status).bg, color: getPaymentStatusColor(p.status).text }} /></td>
                         <td className="cell-secondary cell-nowrap">{formatDate(p.received_at || p.created_at)}</td>
                         <td>
-                          {p.status === 'PENDING' && <Button variant="ghost" size="sm" onClick={() => handleConfirmPayment(p.payment_id)}>Confirm</Button>}
-                          {p.status === 'CONFIRMED' && <Button variant="ghost" size="sm" onClick={() => handleReversePayment(p.payment_id)} style={{ color: 'var(--color-danger)' }}>Reverse</Button>}
+                          {canUpdate && p.status === 'PENDING' && <Button variant="ghost" size="sm" onClick={() => handleConfirmPayment(p.payment_id)}>Confirm</Button>}
+                          {canUpdate && p.status === 'CONFIRMED' && <Button variant="ghost" size="sm" onClick={() => handleReversePayment(p.payment_id)} style={{ color: 'var(--color-danger)' }}>Reverse</Button>}
                         </td>
                       </tr>
                     ))}
@@ -353,7 +362,7 @@ export function SalesOrderWorkspacePage() {
                       <a href={`/api/sales-orders/receipts/${r.receipt_id}/pdf/`} target="_blank" rel="noopener noreferrer">
                         <Button variant="ghost" size="sm">Download PDF</Button>
                       </a>
-                      {r.status === 'VALID' && (
+                      {canUpdate && r.status === 'VALID' && (
                         <Button variant="ghost" size="sm" onClick={() => handleVoidReceipt(r.receipt_id)} style={{ color: 'var(--color-danger)' }}>Void</Button>
                       )}
                     </div>
@@ -383,7 +392,7 @@ export function SalesOrderWorkspacePage() {
         title="Receipt Preview"
         footer={<>
           <Button variant="ghost" onClick={() => setReceiptPreview(null)}>Close</Button>
-          {receiptPreview && receiptPreview.status === 'VALID' && (
+          {canUpdate && receiptPreview && receiptPreview.status === 'VALID' && (
             <Button variant="danger" size="sm" onClick={() => handleVoidReceipt(receiptPreview.receipt_id)}>Void Receipt</Button>
           )}
         </>}
@@ -399,7 +408,9 @@ export function SalesOrderWorkspacePage() {
         title="Record Payment"
         footer={<>
           <Button variant="ghost" onClick={() => setPaymentDialogOpen(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleRecordPayment}>Record Payment</Button>
+          <PermissionGate permission={PERMISSIONS.SALES_ORDER_UPDATE}>
+            <Button variant="primary" onClick={handleRecordPayment}>Record Payment</Button>
+          </PermissionGate>
         </>}
       >
         <Field label="Amount" required>
