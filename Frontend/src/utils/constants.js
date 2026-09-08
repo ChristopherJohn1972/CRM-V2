@@ -126,6 +126,10 @@ export const PERMISSIONS = {
   SALES_ORDER_DELETE: 'sales_order.sales_order.delete',
   SALES_ORDER_WORKFLOW: 'sales_order.sales_order.workflow',
   SALES_ORDER_CALCULATE: 'sales_order.sales_order.calculate',
+  LEAD_READ: 'lead.view',
+  LEAD_CREATE: 'lead.create',
+  LEAD_UPDATE: 'lead.edit',
+  LEAD_DELETE: 'lead.edit',
 };
 
 export const SCOPE_HIERARCHY = ['NONE', 'OWN', 'ASSIGNED', 'TEAM', 'DEPARTMENT', 'ALL'];
