@@ -137,3 +137,6 @@ id_rsa.pub
 *.temp
 *.bak
 *.orig
+
+# Local credentials / user seed data
+crm Users.txt
